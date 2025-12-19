@@ -1,7 +1,7 @@
 resource "google_compute_instance" "instance_for_image" {
   name         = "tf-vm-for-image-bm"
   machine_type = "e2-medium"
-  zone = var.zone
+  zone         = var.zone
 
   tags = ["http-back-server", "allow-health-check"]
 
@@ -21,7 +21,7 @@ resource "google_compute_instance" "instance_for_image" {
   }
 
   metadata_startup_script = file("${path.module}/scripts/apache-startup.sh")
-  desired_status = "TERMINATED"
+  desired_status          = "TERMINATED"
 }
 
 
@@ -49,9 +49,9 @@ resource "google_compute_instance_template" "default" {
   }
 
   network_interface {
-    network = var.vpc_id
+    network    = var.vpc_id
     subnetwork = var.subnet
-  }  
+  }
 
   metadata_startup_script = file("${path.module}/scripts/apache-index.sh")
 }

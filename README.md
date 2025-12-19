@@ -66,6 +66,7 @@ The infrastructure consists of several modules:
 - **HTTP Proxy**: Handles HTTP requests
 - **URL Map**: Routes traffic to the backend service
 - **Backend Service**: Distributes traffic across the instance group
+- **Security Policy** (Optional): Enforces Cloud Armor DDoS/WAF protection rules for specific IP
 - **Health Check**: Monitors instance health (port 80, 10s intervals)
 - **Static IP**: Reserved external IP address for consistent access
 
@@ -84,7 +85,7 @@ The infrastructure consists of several modules:
 project     = "your-gcp-project-id"
 region      = "us-central1"
 zone        = "us-central1-a"
-my_ip_allow = ["YOUR_IP_RANGE/XX"]  # e.g., ["209.0.0.0/8"]
+my_ip_allow = ["YOUR_IP_RANGE/XX"]  # e.g., ["239.0.0.0/8"]
 ```
 
 ## Deployment
@@ -122,6 +123,42 @@ my_ip_allow = ["YOUR_IP_RANGE/XX"]  # e.g., ["209.0.0.0/8"]
 ✅ **Load Balancing**: Global HTTP load balancer with CDN enabled  
 ✅ **Custom Image**: Golden image with Apache pre-installed for faster boot  
 ✅ **Security**: Firewall rules restrict access to authorized sources  
+✅ **Cloud Armor** (Optional): DDoS protection and WAF rules via security policy  
+
+## Security Policy (Cloud Armor)
+
+The backend service supports optional **Cloud Armor** security policies for:
+- **DDoS Protection**: Defend against volumetric attacks
+- **WAF Rules**: Block malicious requests based on patterns
+- **Rate Limiting**: Prevent abuse from single IPs
+- **Geo-blocking**: Restrict access by country
+
+### To Enable Security Policy
+
+1. Create a Cloud Armor policy in GCP:
+   ```bash
+   gcloud compute security-policies create my-policy
+   ```
+
+2. Add rules (example - allow only specific countries):
+   ```bash
+   gcloud compute security-policies rules create 100 \
+     --security-policy=my-policy \
+     --action allow \
+     --origin-region-allow=US,CA
+   ```
+
+3. Set in `terraform.tfvars`:
+   ```hcl
+   security_policy_id = "projects/YOUR_PROJECT/global/securityPolicies/my-policy"
+   ```
+
+4. Apply Terraform:
+   ```bash
+   terraform apply
+   ```
+
+**Note**: `security_policy_id` must be a string (the policy's full resource path), not an object.
 
 
 ## Notes

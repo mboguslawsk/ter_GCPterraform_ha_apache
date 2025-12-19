@@ -5,3 +5,7 @@ output "vpc_id" {
 output "subnet" {
   value = google_compute_subnetwork.subnet.id
 }
+
+output "security_policy_id" {
+  value = google_compute_security_policy.allow_ip_only.id
+}

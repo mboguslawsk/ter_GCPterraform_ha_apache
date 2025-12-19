@@ -26,7 +26,7 @@ resource "google_compute_url_map" "default" {
   default_service = google_compute_backend_service.default.id
 }
 
-# backend service with custom request and response headers
+# backend service
 resource "google_compute_backend_service" "default" {
   name                  = "tf-l7-xlb-backend-service-bm"
   protocol              = "HTTP"
@@ -36,6 +36,8 @@ resource "google_compute_backend_service" "default" {
   enable_cdn            = true
 
   health_checks = [google_compute_health_check.http-health-check.id]
+
+  security_policy = var.security_policy_id
 
   backend {
     group           = var.igm_instance_grp
@@ -53,3 +55,4 @@ resource "google_compute_health_check" "http-health-check" {
     port_specification = "USE_FIXED_PORT"
   }
 }
+
