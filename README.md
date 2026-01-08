@@ -133,34 +133,6 @@ The backend service supports optional **Cloud Armor** security policies for:
 - **Rate Limiting**: Prevent abuse from single IPs
 - **Geo-blocking**: Restrict access by country
 
-### To Enable Security Policy
-
-1. Create a Cloud Armor policy in GCP:
-   ```bash
-   gcloud compute security-policies create my-policy
-   ```
-
-2. Add rules (example - allow only specific countries):
-   ```bash
-   gcloud compute security-policies rules create 100 \
-     --security-policy=my-policy \
-     --action allow \
-     --origin-region-allow=US,CA
-   ```
-
-3. Set in `terraform.tfvars`:
-   ```hcl
-   security_policy_id = "projects/YOUR_PROJECT/global/securityPolicies/my-policy"
-   ```
-
-4. Apply Terraform:
-   ```bash
-   terraform apply
-   ```
-
-**Note**: `security_policy_id` must be a string (the policy's full resource path), not an object.
-
-
 ## Notes
 
 - The golden image creation process requires the `instance_for_image` VM to be created and terminated
